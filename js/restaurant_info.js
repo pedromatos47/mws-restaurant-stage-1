@@ -56,10 +56,11 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
+  image.className = 'restaurant-img col-12 col-sm-10'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   const cuisine = document.getElementById('restaurant-cuisine');
+  cuisine.className = 'col-12 col-sm-10 d-flex'
   cuisine.innerHTML = restaurant.cuisine_type;
 
   // fill operating hours
@@ -95,9 +96,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
+  const ul = document.getElementById('reviews-list');
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -105,10 +104,11 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     container.appendChild(noReviews);
     return;
   }
-  const ul = document.getElementById('reviews-list');
+
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
+
   container.appendChild(ul);
 }
 
@@ -116,24 +116,51 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
-  const li = document.createElement('li');
-  const name = document.createElement('p');
-  name.innerHTML = review.name;
-  li.appendChild(name);
+  // Create review container div
+  const reviewDiv = document.createElement('div');
+  reviewDiv.className = 'review-div';
 
-  const date = document.createElement('p');
+  // Create review header
+  const header = document.createElement('div');
+  header.className = 'review-header d-flex';
+
+  // Create review author element
+  const author = document.createElement('span');
+  author.className = 'review-author';
+  author.innerHTML = review.name;
+  header.appendChild(author);
+  
+  // Create review date element
+  const date = document.createElement('span');
+  date.className = 'review-date'
   date.innerHTML = review.date;
-  li.appendChild(date);
+  header.appendChild(date);
 
+  const reviewDetailsDiv = document.createElement('div');
+  reviewDetailsDiv.className = 'review-details-div';
+  
+  // Create review rating element
   const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
-  li.appendChild(rating);
+  rating.className = 'review-rating f-bold';
+  rating.innerHTML = 'Rating: ';
+  
+  for (var i = 1; i <= review.rating; i++) {
+    const span = document.createElement('i');
+    span.className = 'fas fa-star';
+    rating.appendChild(span);
+  }
 
+  reviewDetailsDiv.appendChild(rating);
+  
+  // Create review comment element
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
-  li.appendChild(comments);
-
-  return li;
+  reviewDetailsDiv.appendChild(comments);
+  
+  // Append header and details to container div
+  reviewDiv.appendChild(header);
+  reviewDiv.appendChild(reviewDetailsDiv);
+  return reviewDiv;
 }
 
 /**
